@@ -2,10 +2,14 @@
 #include "FluidResourceSinkModule.h"
 
 #include "SML/Public/Patching/NativeHookManager.h"
+#include "SML/Public/Patching/BlueprintHookManager.h"
+#include "SML/Public/Patching/BlueprintHookHelper.h"
 #include "Buildables/FGBuildableResourceSink.h"
 #include "FGPipeConnectionFactory.h"
 #include "Resources/FGItemDescriptor.h"
 #include "FGResourceSinkSubsystem.h"
+#include "UI/FGInteractWidget.h"
+#include "FGGameMode.h"
 
 DEFINE_LOG_CATEGORY(LogFluidResourceSink);
 
@@ -50,6 +54,29 @@ void FFluidResourceSinkModule::StartupModule() {
 				}
 			}
 		}
+	});
+
+	AFGGameMode* gameModeCDO = GetMutableDefault<AFGGameMode>();
+	SUBSCRIBE_METHOD_VIRTUAL(AFGGameMode::PostLogin, gameModeCDO, [](auto& scope, AFGGameMode* self, APlayerController* playerController) {
+		// fixup the blueprint so it works with buildings that don't inherit from Build_ResourceSink, but from FGBuildableResourceSink.
+		UBlueprintHookManager* HookManager = GEngine->GetEngineSubsystem<UBlueprintHookManager>();
+		check(HookManager);
+		UClass* ResourceSinkWidgetClass = LoadObject<UClass>(nullptr, TEXT("/Game/FactoryGame/Buildable/Factory/ResourceSink/UI/BPW_ResourceSink.BPW_ResourceSink_C"));
+		check(ResourceSinkWidgetClass);
+		UFunction* RSWConstructFunction = ResourceSinkWidgetClass->FindFunctionByName(TEXT("ExecuteUbergraph_BPW_ResourceSink"));
+		check(RSWConstructFunction);
+
+		HookManager->HookBlueprintFunction(RSWConstructFunction, [](FBlueprintHookHelper& helper) {
+			UObject* context = helper.GetContext();
+
+			FObjectProperty* mResourceSinkProperty = CastFieldChecked<FObjectProperty>(context->GetClass()->FindPropertyByName(TEXT("mResourceSink")));
+			check(mResourceSinkProperty);
+			UObject* mResourceSink = mResourceSinkProperty->GetPropertyValue_InContainer(context, 0);
+			if (!mResourceSink) {
+				UFGInteractWidget* interactWidget = CastChecked<UFGInteractWidget>(context);
+				mResourceSinkProperty->SetPropertyValue_InContainer(context, interactWidget->mInteractObject, 0);
+			}
+		}, 1707);
 	});
 #endif
 }
