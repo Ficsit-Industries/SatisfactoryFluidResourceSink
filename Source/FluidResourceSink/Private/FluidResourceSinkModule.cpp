@@ -76,7 +76,7 @@ void FFluidResourceSinkModule::StartupModule() {
 				UFGInteractWidget* interactWidget = CastChecked<UFGInteractWidget>(context);
 				mResourceSinkProperty->SetPropertyValue_InContainer(context, interactWidget->mInteractObject, 0);
 			}
-		}, 1707);
+		}, 2046);
 	});
 #endif
 }
