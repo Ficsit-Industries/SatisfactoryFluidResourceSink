@@ -7,3 +7,6 @@ If you want to install this mod, please go to [ficsit.app](https://ficsit.app/mo
 ### Credits
 - Icon by Deantendo#4265
 - Animation by HeartKey#0101
+
+# DISCONTINUED
+This project is no longer maintained.
