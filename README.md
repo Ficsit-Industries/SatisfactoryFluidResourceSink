@@ -1,4 +1,4 @@
-# Fluid Resource Sink
+# Fluid Resource Sink Redux
 
 This is a mod for [Satisfactory](https://www.satisfactorygame.com/).  
 If you want to install this mod, please go to [ficsit.app](https://ficsit.app/mod/8McYne225MLHND).
@@ -9,4 +9,4 @@ If you want to install this mod, please go to [ficsit.app](https://ficsit.app/mo
 - Animation by HeartKey#0101
 
 # DISCONTINUED
-This project is no longer maintained.
+This project is no longer maintained by Turtlefight, the Redux version is maintained by Ficsit Industries (No. 5).
